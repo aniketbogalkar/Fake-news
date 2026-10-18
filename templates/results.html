@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Verification Results #{{ sub.id }} — NewsCheck AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 1080px; margin: 0 auto;">
+    
+    <!-- Breadcrumb & Actions -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <a href="{{ url_for('analyze') }}" style="color: var(--teal-glow); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-arrow-left"></i> Analyze Another Claim
+        </a>
+        <div style="display: flex; gap: 0.75rem;">
+            <button onclick="window.print()" class="sample-pill" style="color: var(--text-primary); border-color: var(--border-subtle);">
+                <i class="fa-solid fa-print"></i> Print Report
+            </button>
+            <a href="{{ url_for('history') }}" class="sample-pill" style="color: var(--text-primary); border-color: var(--border-subtle); text-decoration: none;">
+                <i class="fa-solid fa-clock-rotate-left"></i> View History
+            </a>
+        </div>
+    </div>
+
+    <!-- Claim Header Card -->
+    <div class="card" style="margin-bottom: 1.75rem; background: rgba(15, 23, 42, 0.9);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">
+                <i class="fa-solid fa-quote-left"></i> Submitted Text for Analysis
+            </span>
+            <span style="font-size: 0.85rem; color: var(--text-secondary);">
+                <i class="fa-regular fa-clock"></i> {{ sub.created_at }}
+            </span>
+        </div>
+        <p style="font-size: 1.15rem; font-weight: 600; color: var(--text-primary); line-height: 1.6;">
+            "{{ sub.input_text }}"
+        </p>
+        {% if sub.source_url %}
+            <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+                <i class="fa-solid fa-link"></i> Provided URL: 
+                <a href="{{ sub.source_url }}" target="_blank" rel="noopener noreferrer" style="color: var(--teal-glow);">
+                    {{ sub.source_url }}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Evidence Verdict Hero Banner -->
+    {% set v_status = sub.verification_status %}
+    {% if "Supported" in v_status %}
+        {% set hero_class = "verdict-supported" %}
+        {% set icon_class = "fa-solid fa-circle-check" %}
+        {% set status_color = "var(--color-supported)" %}
+    {% elif "Contradicted" in v_status %}
+        {% set hero_class = "verdict-contradicted" %}
+        {% set icon_class = "fa-solid fa-triangle-exclamation" %}
+        {% set status_color = "var(--color-contradicted)" %}
+    {% elif "Mixed" in v_status %}
+        {% set hero_class = "verdict-mixed" %}
+        {% set icon_class = "fa-solid fa-circle-half-stroke" %}
+        {% set status_color = "var(--color-mixed)" %}
+    {% else %}
+        {% set hero_class = "verdict-unverified" %}
+        {% set icon_class = "fa-solid fa-circle-question" %}
+        {% set status_color = "var(--color-unverified)" %}
+    {% endif %}
+
+    <div class="results-header-hero {{ hero_class }}">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span style="font-size: 2rem; color: {{ status_color }};">
+                <i class="{{ icon_class }}"></i>
+            </span>
+            <span class="badge" style="background: {{ status_color }}22; color: {{ status_color }}; border: 1px solid {{ status_color }}66;">
+                Evidence Verification Result
+            </span>
+        </div>
+        <h2 class="verdict-title" style="color: {{ status_color }};">
+            {{ sub.verification_status }}
+        </h2>
+        <p class="verdict-summary">
+            {{ sub.evidence_summary }}
+        </p>
+    </div>
+
+    <!-- Dual Engine Breakdown Grid -->
+    <div class="dual-engine-grid">
+        
+        <!-- Engine 1: Live Verification Engine -->
+        <div class="engine-card">
+            <div class="engine-header">
+                <div class="engine-title">
+                    <i class="fa-solid fa-newspaper" style="color: var(--teal-glow);"></i> 1. Live Evidence Engine
+                </div>
+                <span class="badge" style="font-size: 0.75rem; background: rgba(72, 202, 228, 0.1); color: var(--teal-glow); border: 1px solid rgba(72, 202, 228, 0.3);">
+                    Real-World Facts
+                </span>
+            </div>
+            
+            <div style="margin-bottom: 1.25rem;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">Live Verification Finding:</div>
+                <div style="font-size: 1.2rem; font-weight: 700; color: {{ status_color }};">
+                    {{ sub.verification_status }}
+                </div>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                {{ sub.evidence_summary }}
+            </p>
+
+            <div style="background: rgba(7, 13, 30, 0.6); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.85rem; color: var(--text-muted);">
+                <i class="fa-solid fa-shield-halved" style="color: var(--teal-glow);"></i> 
+                <strong>Search Integrity:</strong> Results sourced from verified press outlets. Silence in news archives is never treated as proof of falsity.
+            </div>
+        </div>
+
+        <!-- Engine 2: Linguistic Machine Learning -->
+        <div class="engine-card">
+            <div class="engine-header">
+                <div class="engine-title">
+                    <i class="fa-solid fa-microchip" style="color: var(--teal-glow);"></i> 2. Statistical NLP Model
+                </div>
+                <span class="badge" style="font-size: 0.75rem; background: rgba(72, 202, 228, 0.1); color: var(--teal-glow); border: 1px solid rgba(72, 202, 228, 0.3);">
+                    Text Pattern Stylometry
+                </span>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">Linguistic Style Classification:</div>
+                <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                    <span style="font-size: 1.2rem; font-weight: 700; color: {% if 'Real' in sub.ml_prediction %}var(--color-supported){% else %}var(--color-contradicted){% endif %};">
+                        {{ sub.ml_prediction }}
+                    </span>
+                    <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-secondary);">
+                        ({{ sub.ml_confidence }}% pattern match)
+                    </span>
+                </div>
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                {{ sub.ml_explanation }}
+            </p>
+
+            <div style="background: rgba(7, 13, 30, 0.6); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.85rem; color: var(--text-muted);">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #fbbf24;"></i> 
+                <strong>Statistical Caveat:</strong> Evaluates vocabulary, n-grams, and syntax markers against past training data. It is not conclusive proof of real-world veracity.
+            </div>
+        </div>
+    </div>
+
+    <!-- Verified Sources & Citations Section -->
+    <div style="margin-top: 2rem;">
+        <div class="sources-section-title">
+            <i class="fa-solid fa-square-rss" style="color: var(--teal-glow);"></i>
+            Matching Journalistic Reports & Citations ({{ sub.sources|length }})
+        </div>
+
+        {% if sub.sources and sub.sources|length > 0 %}
+            <div class="sources-grid">
+                {% for art in sub.sources %}
+                    <div class="source-card">
+                        <div>
+                            <div class="source-meta">
+                                <span class="source-name">{{ art.source }}</span>
+                                <span><i class="fa-regular fa-calendar"></i> {{ art.date }}</span>
+                            </div>
+                            <div style="margin-bottom: 0.5rem;">
+                                <span class="badge-tier">{{ art.credibility_tier }}</span>
+                            </div>
+                            <h4 class="source-headline">{{ art.title }}</h4>
+                            <p class="source-snippet">
+                                {{ art.snippet }}
+                            </p>
+                        </div>
+                        <div>
+                            <a href="{{ art.url }}" target="_blank" rel="noopener noreferrer" class="source-link">
+                                Read Complete Article on {{ art.source }} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card" style="text-align: center; padding: 3rem 1.5rem; background: rgba(15, 23, 42, 0.5);">
+                <div style="font-size: 2.5rem; color: var(--color-unverified); margin-bottom: 1rem;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                    No Direct Matching Reports in Available Sources
+                </h3>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem; font-size: 0.95rem;">
+                    Our automated search did not find accredited reports directly confirming or contradicting this claim in accessible news archives.
+                </p>
+                <div style="display: inline-block; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: var(--radius-sm); padding: 0.75rem 1.25rem; color: var(--color-unverified); font-size: 0.85rem;">
+                    <i class="fa-solid fa-circle-info"></i> Ethical Guideline: A newspaper's silence is not treated as evidence of falsity. The claim remains honestly classified as Unverified.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze News Claim — NewsCheck AI{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem;">
+            Submit News for Verification
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.05rem;">
+            Provide a headline, complete article text, or social media forward. Our dual engine will extract core assertions and search accredited newsrooms.
+        </p>
+    </div>
+
+    <div class="analysis-form-card" style="box-shadow: none; border-color: var(--border-subtle); margin-bottom: 2rem;">
+        <!-- Sample Pills -->
+        <div class="sample-pills-container">
+            <div class="sample-pills-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Select a preset test claim:</div>
+            <div class="pills-group">
+                <button type="button" class="sample-pill" data-sample="Supreme Court of India strikes down the Union government electoral bonds scheme as unconstitutional">
+                    🏛️ Electoral Bonds Verdict (The Hindu)
+                </button>
+                <button type="button" class="sample-pill" data-sample="NASA reports 15 days of complete darkness across Earth due to Jupiter Venus cosmic alignment">
+                    🌑 15 Days of Earth Darkness (Viral Rumor)
+                </button>
+                <button type="button" class="sample-pill" data-sample="European Union antitrust regulators open official investigation into Apple, Google, and Meta under Digital Markets Act">
+                    🇪🇺 EU Digital Markets Act Probe (Reuters)
+                </button>
+                <button type="button" class="sample-pill" data-sample="WhatsApp announces all messages will be charged 3 rupees each starting tomorrow unless forwarded to 10 contacts">
+                    📱 WhatsApp Message Fee Hoax
+                </button>
+            </div>
+        </div>
+
+        <form action="{{ url_for('analyze') }}" method="POST" id="analysisForm">
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <label for="news_text" class="form-label" style="margin-bottom: 0;">
+                        News Claim / Article Body <span style="color: var(--color-contradicted);">*</span>
+                    </label>
+                    <span id="charCount" style="font-size: 0.8rem; color: var(--text-muted);">0 characters</span>
+                </div>
+                <textarea 
+                    name="news_text" 
+                    id="news_text" 
+                    class="form-textarea" 
+                    style="min-height: 180px;"
+                    placeholder="Enter the news text, headline, or claim to evaluate (minimum 15 characters)..." 
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="source_url" class="form-label">
+                    Original Source or Social Media URL <span>(Optional)</span>
+                </label>
+                <input 
+                    type="url" 
+                    name="source_url" 
+                    id="source_url" 
+                    class="form-input" 
+                    placeholder="https://example.com/original-article-link"
+                >
+            </div>
+
+            <button type="submit" class="btn-primary" id="analyzeSubmitBtn">
+                <i class="fa-solid fa-magnifying-glass"></i> Analyze & Cross-Check Evidence
+            </button>
+        </form>
+    </div>
+
+    <!-- Helpful Tips Card -->
+    <div class="card" style="background: rgba(15, 23, 42, 0.4);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--teal-glow);">
+            <i class="fa-solid fa-lightbulb"></i> How NewsCheck AI Evaluates Submissions
+        </h3>
+        <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.25rem; line-height: 1.8;">
+            <li><strong>Linguistic Stylometry:</strong> Analyzes whether syntax, punctuation, and sensational vocabulary mirror typical fabricated articles versus journalistic reporting.</li>
+            <li><strong>Live Factual Cross-Referencing:</strong> Queries accredited archives including Reuters, BBC News, The Hindu, Times of India, and official government releases.</li>
+            <li><strong>Ethical Fact-Checking Rule:</strong> If an event is not reported in major newsrooms, it is marked as <em>Unverified — insufficient evidence</em>, avoiding false-positive convictions.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

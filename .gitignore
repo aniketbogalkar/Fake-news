@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Environment Variables
+.env
+
+# Models and Trained Artifacts (optional to track or ignore large weights)
+# models/*.pkl
+
+# Dataset files (large files)
+dataset/*.csv
+!dataset/sample_*.csv
+
+# SQLite Database
+database/*.db
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

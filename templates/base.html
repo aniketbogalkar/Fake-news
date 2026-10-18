@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NewsCheck AI — An AI-Powered Fake News Detection and News Source Verification System utilizing NLP, Machine Learning, and Live News Aggregation.">
+    <title>{% block title %}NewsCheck AI — Fake News Detection & Source Verification{% endblock %}</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav class="navbar" id="mainNavbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="brand-logo" id="brandLink">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>NewsCheck <span>AI</span></div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('analyze') }}" class="nav-link {% if request.endpoint == 'analyze' %}active{% endif %}">Analyze News</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Live Dashboard</a></li>
+                <li><a href="{{ url_for('history') }}" class="nav-link {% if request.endpoint == 'history' %}active{% endif %}">History</a></li>
+                <li><a href="{{ url_for('about') }}" class="nav-link {% if request.endpoint == 'about' %}active{% endif %}">Methodology</a></li>
+                <li><a href="{{ url_for('analyze') }}" class="nav-link nav-cta"><i class="fa-solid fa-magnifying-glass"></i> Check a Claim</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-content">
+        <!-- Flash Notifications -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <span><i class="fa-solid fa-circle-info"></i> {{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Analyzing News Claim</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Connecting to machine learning inference and live source registries...</p>
+            <div class="loading-step-text" id="loadingStepText">1/4: Analyzing linguistic patterns (TF-IDF)...</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><strong>NewsCheck AI</strong> — Academic Engineering Project | Dual-Engine Fake News Detection & Real-Time Source Verification</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+            Notice: Algorithmic predictions assess writing styles against historical corpora. Real-world claims are verified through direct citations from accredited news services (Reuters, BBC, The Hindu, TOI).
+        </p>
+    </footer>
+
+    <!-- App JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

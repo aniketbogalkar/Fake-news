@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}NewsCheck AI — AI-Powered Fake News Detection & Live Source Verification{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-badge">
+        <i class="fa-solid fa-atom"></i> Dual-Engine Verification Platform
+    </div>
+    <h1 class="hero-title">
+        Expose Disinformation with <br>
+        <span class="gradient-text">AI Linguistics & Live Evidence</span>
+    </h1>
+    <p class="hero-subtitle">
+        Analyze news headlines, WhatsApp forwards, or social media claims. We cross-reference textual markers using Machine Learning and search accredited publications (Reuters, BBC, The Hindu, TOI) for authentic journalistic evidence.
+    </p>
+</section>
+
+<!-- Direct Analysis Card -->
+<div class="analysis-form-card">
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-magnifying-glass-chart" style="color: var(--teal-glow);"></i> Enter News or Claim to Verify
+    </h2>
+    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        Paste a complete article, viral WhatsApp forward, or concise headline below.
+    </p>
+
+    <!-- Quick Sample Clickable Pills -->
+    <div class="sample-pills-container">
+        <div class="sample-pills-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Try these sample claims:</div>
+        <div class="pills-group">
+            <button type="button" class="sample-pill" data-sample="ISRO successfully tests intermediate semi-cryogenic engine at Mahendragiri propulsion complex">
+                🚀 ISRO Semi-Cryogenic Engine Test
+            </button>
+            <button type="button" class="sample-pill" data-sample="UNESCO announces that Jana Gana Mana has been officially declared the best national anthem in the world">
+                🚩 UNESCO Best National Anthem Claim
+            </button>
+            <button type="button" class="sample-pill" data-sample="Reserve Bank of India Monetary Policy Committee keeps repo rate steady at 6.5 percent">
+                🏛️ RBI Repo Rate Decision
+            </button>
+            <button type="button" class="sample-pill" data-sample="Drinking boiled garlic and hot lemon water completely cures malignant cancer in 24 hours">
+                💊 Miracle Garlic Cancer Cure
+            </button>
+            <button type="button" class="sample-pill" data-sample="New 2000 rupee currency notes contain secret radioactive Nano GPS tracking chips tracked by satellites">
+                🛰️ 2000 Note Nano GPS Chip
+            </button>
+        </div>
+    </div>
+
+    <form action="{{ url_for('analyze') }}" method="POST" id="analysisForm">
+        <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <label for="news_text" class="form-label" style="margin-bottom: 0;">
+                    News Headline or Text <span style="color: var(--color-contradicted);">*</span>
+                </label>
+                <span id="charCount" style="font-size: 0.8rem; color: var(--text-muted);">0 characters</span>
+            </div>
+            <textarea 
+                name="news_text" 
+                id="news_text" 
+                class="form-textarea" 
+                placeholder="Paste news headline, article body, or viral forward here (minimum 15 characters)..." 
+                required
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="source_url" class="form-label">
+                Original Article URL <span>(Optional — for provenance tracking)</span>
+            </label>
+            <input 
+                type="url" 
+                name="source_url" 
+                id="source_url" 
+                class="form-input" 
+                placeholder="https://example.com/news-article-link"
+            >
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitBtn">
+            <i class="fa-solid fa-bolt"></i> Run Comprehensive Verification
+        </button>
+    </form>
+</div>
+
+<!-- Community Statistics Ticker -->
+<div class="stats-grid">
+    <div class="stat-box">
+        <div class="stat-num">{{ stats.total_submissions }}</div>
+        <div class="stat-label">Total Claims Analyzed</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-num" style="color: var(--color-supported);">{{ stats.supported_count }}</div>
+        <div class="stat-label">Supported by Evidence</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-num" style="color: var(--color-contradicted);">{{ stats.contradicted_count }}</div>
+        <div class="stat-label">Contradicted by Evidence</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-num" style="color: var(--color-unverified);">{{ stats.unverified_count }}</div>
+        <div class="stat-label">Unverified Claims</div>
+    </div>
+</div>
+
+<!-- Architectural Features -->
+<div style="margin-top: 3.5rem;">
+    <h2 style="font-size: 1.65rem; font-weight: 700; text-align: center; margin-bottom: 2rem;">
+        Engineered for Rigorous, Responsible Fact-Checking
+    </h2>
+    <div class="dual-engine-grid">
+        <div class="card">
+            <div style="font-size: 1.8rem; color: var(--teal-glow); margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                1. Dual Machine Learning Pipeline
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                Trained on verified datasets using TF-IDF sublinear n-grams and evaluated on both Passive-Aggressive Classifier and Logistic Regression. Features agency header filtering to prevent data leakage.
+            </p>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 1.8rem; color: var(--color-supported); margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-newspaper"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                2. Live Accredited News Search
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                Queries live news APIs and search engines to retrieve authenticated reports from The Hindu, The Times of India, BBC, Reuters, and official government agencies (PIB, ISRO).
+            </p>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 1.8rem; color: var(--color-unverified); margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                3. Truthful Silence Policy
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                Adheres to ethical journalism: absence of matching articles is classified as <em>Unverified — insufficient evidence</em>, never falsely flagged as fake news simply because an article is missing.
+            </p>
+        </div>
+
+        <div class="card">
+            <div style="font-size: 1.8rem; color: var(--color-contradicted); margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+                4. Debunking & Contradiction Detection
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                Identifies fact-check reports and authoritative debunking notices from credible bureaus to explicitly flag viral hoaxes with transparent source citations.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

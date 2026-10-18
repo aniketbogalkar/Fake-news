@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis History — NewsCheck AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem;">
+                Analysis History & Audit Log
+            </h1>
+            <p style="color: var(--text-secondary); font-size: 1rem;">
+                Review previously processed news articles, extracted verdicts, and source citations.
+            </p>
+        </div>
+        {% if submissions and submissions|length > 0 %}
+            <form action="{{ url_for('clear_history') }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently clear all analysis history?');">
+                <button type="submit" class="sample-pill" style="color: var(--color-contradicted); border-color: rgba(244, 63, 94, 0.4); background: rgba(244, 63, 94, 0.1);">
+                    <i class="fa-solid fa-trash-can"></i> Clear History
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if submissions and submissions|length > 0 %}
+    <!-- Filter Search Box -->
+    <div style="margin-bottom: 1.5rem;">
+        <input 
+            type="text" 
+            id="historySearch" 
+            class="form-input" 
+            placeholder="Search past claims, sources, or verdicts..." 
+            style="max-width: 450px;"
+        >
+    </div>
+
+    <div class="table-responsive">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th style="width: 70px;">ID</th>
+                    <th style="width: 150px;">Timestamp</th>
+                    <th>Submitted Claim / Headline</th>
+                    <th style="width: 220px;">Evidence Verdict</th>
+                    <th style="width: 170px;">ML Pattern</th>
+                    <th style="width: 90px; text-align: center;">Sources</th>
+                    <th style="width: 110px; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                {% for sub in submissions %}
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 700;">#{{ sub.id }}</td>
+                        <td style="font-size: 0.85rem; color: var(--text-secondary);">{{ sub.created_at }}</td>
+                        <td>
+                            <div style="font-weight: 600; color: var(--text-primary); max-width: 380px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ sub.input_text }}
+                            </div>
+                        </td>
+                        <td>
+                            {% set v = sub.verification_status %}
+                            {% if "Supported" in v %}
+                                <span class="badge badge-supported" style="font-size: 0.75rem;">Supported</span>
+                            {% elif "Contradicted" in v %}
+                                <span class="badge badge-contradicted" style="font-size: 0.75rem;">Contradicted</span>
+                            {% elif "Mixed" in v %}
+                                <span class="badge badge-mixed" style="font-size: 0.75rem;">Mixed</span>
+                            {% else %}
+                                <span class="badge badge-unverified" style="font-size: 0.75rem;">Unverified</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: {% if 'Real' in sub.ml_prediction %}var(--color-supported){% else %}var(--color-contradicted){% endif %};">
+                                {{ sub.ml_prediction }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="badge-tier">{{ sub.sources|length }}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="{{ url_for('results', submission_id=sub.id) }}" class="source-link">
+                                View <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 4rem 1.5rem;">
+        <div style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem;">
+            No Prior Analyses Recorded
+        </h3>
+        <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.5rem;">
+            Your verification history is currently empty. Run your first fact-check claim to generate audit records.
+        </p>
+        <a href="{{ url_for('analyze') }}" class="btn-primary" style="display: inline-flex; width: auto;">
+            Analyze Your First News Item
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
