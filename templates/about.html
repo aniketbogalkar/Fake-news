@@ -65,10 +65,49 @@
         </div>
     </div>
 
-    <!-- 3. Ethical Guidelines -->
+    <!-- 3. Why Classifier Percentage is a Style Score (Not a True Probability) -->
     <div class="card" style="margin-bottom: 2rem;">
         <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--teal-glow); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-scale-balanced"></i> 3. Ethical Fact-Checking Guidelines
+            <i class="fa-solid fa-gauge-high"></i> 3. Style Score vs. True Probability: A Critical Distinction
+        </h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.7;">
+            In NewsCheck AI, the classifier percentage (e.g. <em>94.2%</em>) is intentionally labeled as a <strong>“Style Score”</strong> rather than a “probability of truth”. This distinction is fundamental to sound machine learning engineering and scientific rigor:
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div style="background: rgba(7, 13, 30, 0.7); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div style="font-weight: 700; color: #fbbf24; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-circle-exclamation"></i> What the Style Score Actually Is
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6; margin: 0;">
+                    The percentage reflects geometric distance from the classifier's decision boundary in a high-dimensional TF-IDF feature space, mapped through a sigmoid transfer function. It measures <strong>lexical, syntactic, and stylistic resemblance</strong> to writing patterns in the training corpus (vocabulary, n-grams, exclamation frequency, tone).
+                </p>
+            </div>
+
+            <div style="background: rgba(7, 13, 30, 0.7); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div style="font-weight: 700; color: var(--color-contradicted); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-ban"></i> What It is NOT (Why Not a Probability)
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6; margin: 0;">
+                    It is <strong>not a calibrated Bayesian posterior probability</strong> that an event actually took place in the physical world. A 95% style score does <em>not</em> mean "there is a 95% chance the claim is factual". It only means the syntax strongly mirrors the formal prose of authentic news archives.
+                </p>
+            </div>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 1.25rem; border-radius: var(--radius-sm); border-left: 4px solid var(--cyan-accent); font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7;">
+            <strong style="color: var(--text-primary);">Why this matters in practice:</strong>
+            <ul style="margin: 0.5rem 0 0 1.2rem; padding: 0;">
+                <li><strong>Sophisticated Disinformation:</strong> State-backed propaganda, financial scams, or crafted deepfake text can be written with pristine, neutral journalistic grammar, scoring high as "real style" despite being complete fabrications.</li>
+                <li><strong>Informal Authentic News:</strong> Urgent breaking alerts, colloquial eyewitness posts, or crisis dispatches may use urgent or emotive phrasing, triggering false alerts in pure stylistic classifiers.</li>
+                <li><strong>The Dual-Engine Remedy:</strong> By presenting the ML output strictly as a <em>Style Score</em> and pairing it with live press cross-referencing, NewsCheck AI prevents false certainty and guides users to verifiable journalistic evidence.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 4. Ethical Guidelines -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--teal-glow); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-scale-balanced"></i> 4. Ethical Fact-Checking Guidelines
         </h2>
         <div style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;">
             <p style="margin-bottom: 0.75rem;">
@@ -78,15 +117,15 @@
                 <strong>No Hallucinated Citations:</strong> Unlike generative chatbots that can invent imaginary citations and fake URLs, NewsCheck AI only displays real articles returned by authorized APIs with verifiable outbound links.
             </p>
             <p>
-                <strong>Transparent Disclaimer:</strong> The machine learning classification is explicitly labeled as a lexical pattern score, ensuring users understand that statistics do not replace journalistic due diligence.
+                <strong>Explicit Style Score Designation:</strong> The machine learning percentage is presented strictly as a stylistic pattern score rather than a truth probability, guaranteeing full transparency for academic and journalistic review.
             </p>
         </div>
     </div>
 
-    <!-- 4. Technology Stack -->
+    <!-- 5. Technology Stack -->
     <div class="card">
         <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--teal-glow); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-code"></i> 4. Technology Stack Specifications
+            <i class="fa-solid fa-code"></i> 5. Technology Stack Specifications
         </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
             <div style="background: rgba(7, 13, 30, 0.6); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">

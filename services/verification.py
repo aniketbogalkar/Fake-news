@@ -107,8 +107,8 @@ class ModelInferenceEngine:
         label_str = "Likely Real News Patterns" if pred_label == 1 else "Likely Fake / Sensational Patterns"
         explanation = (
             f"The statistical model classifies the linguistic style of this text as '{label_str}' "
-            f"with a {confidence}% pattern match confidence against the training corpus. "
-            f"Note: This measures writing style and lexical markers, not factual truth in the real world."
+            f"with a {confidence}% style score against the training corpus patterns. "
+            f"Note: This percentage is a stylometric similarity score, not an empirical probability of real-world factual truth."
         )
 
         return {

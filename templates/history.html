@@ -71,9 +71,12 @@
                             {% endif %}
                         </td>
                         <td>
-                            <span style="font-size: 0.85rem; font-weight: 600; color: {% if 'Real' in sub.ml_prediction %}var(--color-supported){% else %}var(--color-contradicted){% endif %};">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: {% if 'Real' in sub.ml_prediction %}var(--color-supported){% else %}var(--color-contradicted){% endif %};">
                                 {{ sub.ml_prediction }}
-                            </span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--teal-glow); font-weight: 600; margin-top: 3px;">
+                                Style Score: {{ sub.ml_confidence }}%
+                            </div>
                         </td>
                         <td style="text-align: center;">
                             <span class="badge-tier">{{ sub.sources|length }}</span>

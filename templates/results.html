@@ -123,13 +123,13 @@
             </div>
 
             <div style="margin-bottom: 1.25rem;">
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">Linguistic Style Classification:</div>
-                <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Linguistic Style Classification:</div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                     <span style="font-size: 1.2rem; font-weight: 700; color: {% if 'Real' in sub.ml_prediction %}var(--color-supported){% else %}var(--color-contradicted){% endif %};">
                         {{ sub.ml_prediction }}
                     </span>
-                    <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-secondary);">
-                        ({{ sub.ml_confidence }}% pattern match)
+                    <span class="badge" style="background: rgba(0, 180, 216, 0.15); color: var(--teal-glow); border: 1px solid rgba(0, 180, 216, 0.35); font-size: 0.85rem; font-weight: 700; padding: 0.3rem 0.65rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-solid fa-gauge-high"></i> Style Score: {{ sub.ml_confidence }}%
                     </span>
                 </div>
             </div>
@@ -138,9 +138,9 @@
                 {{ sub.ml_explanation }}
             </p>
 
-            <div style="background: rgba(7, 13, 30, 0.6); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.85rem; color: var(--text-muted);">
+            <div style="background: rgba(7, 13, 30, 0.6); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
                 <i class="fa-solid fa-triangle-exclamation" style="color: #fbbf24;"></i> 
-                <strong>Statistical Caveat:</strong> Evaluates vocabulary, n-grams, and syntax markers against past training data. It is not conclusive proof of real-world veracity.
+                <strong>Style Score Notice:</strong> The {{ sub.ml_confidence }}% metric is a <em>stylistic similarity score</em> based on vocabulary, n-grams, and syntax against past training data. <u>It is not a true mathematical probability</u> of real-world factual truth. Real-world truth is determined by the live journalistic evidence engine.
             </div>
         </div>
     </div>
