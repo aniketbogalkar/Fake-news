@@ -18,6 +18,7 @@ ENV/
 # Dataset files (large files)
 dataset/*.csv
 !dataset/sample_*.csv
+tools/sample_data/
 
 # SQLite Database
 database/*.db

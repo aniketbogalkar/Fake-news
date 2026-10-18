@@ -63,7 +63,7 @@ def load_dataset():
     if not os.path.exists(true_path) or not os.path.exists(fake_path):
         raise FileNotFoundError(
             f"Dataset files missing! Please ensure 'True.csv' and 'Fake.csv' exist in {DATASET_DIR}. "
-            f"Run 'python dataset/bootstrap_sample.py' to generate initial sample files."
+            f"Run 'python tools/bootstrap_sample.py' to generate initial sample files into tools/sample_data/."
         )
 
     print(f"[DataLoader] Reading real news from: {true_path}")

@@ -5,9 +5,14 @@ Allows immediate local model training and verification testing.
 """
 
 import os
+import sys
 import pandas as pd
 
-DATASET_DIR = os.path.dirname(__file__)
+# Safe target directory: keeps bootstrap samples strictly isolated in tools/sample_data/
+# This prevents accidental overwriting of the 44,000+ article dataset in dataset/
+DEFAULT_SAMPLE_DIR = os.path.join(os.path.dirname(__file__), "sample_data")
+PROTECTED_DATASET_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "dataset"))
+
 
 REAL_ARTICLES = [
     {
@@ -136,14 +141,39 @@ FAKE_ARTICLES = [
 ]
 
 
-def generate_bootstrap_dataset(force=False):
-    os.makedirs(DATASET_DIR, exist_ok=True)
-    true_path = os.path.join(DATASET_DIR, "True.csv")
-    fake_path = os.path.join(DATASET_DIR, "Fake.csv")
+def generate_bootstrap_dataset(target_dir=None, force=False):
+    """
+    Generates a starter sample dataset into tools/sample_data/.
+    Strictly safeguards against overwriting the real 44,000+ article dataset in dataset/.
+    """
+    target_dir = os.path.abspath(target_dir or DEFAULT_SAMPLE_DIR)
+
+    # Overwrite protection for authentic dataset directory
+    if target_dir == PROTECTED_DATASET_DIR:
+        existing_real = os.path.join(target_dir, "True.csv")
+        existing_fake = os.path.join(target_dir, "Fake.csv")
+        if os.path.exists(existing_real) or os.path.exists(existing_fake):
+            real_size = os.path.getsize(existing_real) if os.path.exists(existing_real) else 0
+            fake_size = os.path.getsize(existing_fake) if os.path.exists(existing_fake) else 0
+            # If files are larger than 500KB, it's the real Kaggle dataset!
+            if real_size > 500_000 or fake_size > 500_000:
+                print(
+                    "\n[SAFETY BLOCKED] Real full dataset detected in 'dataset/'!\n"
+                    f"  - dataset/True.csv: {real_size / (1024*1024):.2f} MB\n"
+                    f"  - dataset/Fake.csv: {fake_size / (1024*1024):.2f} MB\n"
+                    "Overwriting is blocked to protect your real training data.\n"
+                    f"Samples are saved isolated in '{DEFAULT_SAMPLE_DIR}'.\n",
+                    file=sys.stderr
+                )
+                return False
+
+    os.makedirs(target_dir, exist_ok=True)
+    true_path = os.path.join(target_dir, "True.csv")
+    fake_path = os.path.join(target_dir, "Fake.csv")
 
     if not force and os.path.exists(true_path) and os.path.exists(fake_path):
         print(f"[Dataset] Existing datasets found at {true_path} and {fake_path}.")
-        return
+        return True
 
     # Expand the samples with minor variations to make adequate training data if needed
     expanded_real = []
@@ -174,7 +204,9 @@ def generate_bootstrap_dataset(force=False):
     print(f"[Dataset] Successfully generated sample dataset: {len(df_real)} real and {len(df_fake)} fake articles.")
     print(f"[Dataset] True.csv saved to {true_path}")
     print(f"[Dataset] Fake.csv saved to {fake_path}")
+    return True
 
 
 if __name__ == "__main__":
-    generate_bootstrap_dataset(force=True)
+    generate_bootstrap_dataset(target_dir=DEFAULT_SAMPLE_DIR, force=True)
+
