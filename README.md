@@ -240,3 +240,5 @@ Use these 5 standard test cases to demonstrate and validate every major facet of
 | **How did you prevent data leakage?** | Datasets like ISOT have wire headers like *"WASHINGTON (Reuters) -"* on real articles. If uncleaned, the model simply learns that "Reuters" = Real. We implemented regex pre-cleaning to strip all agency prefixes. |
 | **How do you handle unindexed news?** | We enforce an ethical rule: **A newspaper's silence is not proof of falsity**. If an item has no matching press articles, it is marked as *Unverified — insufficient evidence*. |
 | **What does the 99.6% classifier score signify?** | The classifier scores about 99.6% on the ISOT test set. This measures how well it separates this dataset’s writing styles, not whether a real-world claim is true. That is why NewsCheck AI adds live evidence-based verification. |
+#   F a k e - n e w s  
+ 
