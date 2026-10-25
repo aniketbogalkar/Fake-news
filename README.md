@@ -240,5 +240,70 @@ Use these 5 standard test cases to demonstrate and validate every major facet of
 | **How did you prevent data leakage?** | Datasets like ISOT have wire headers like *"WASHINGTON (Reuters) -"* on real articles. If uncleaned, the model simply learns that "Reuters" = Real. We implemented regex pre-cleaning to strip all agency prefixes. |
 | **How do you handle unindexed news?** | We enforce an ethical rule: **A newspaper's silence is not proof of falsity**. If an item has no matching press articles, it is marked as *Unverified — insufficient evidence*. |
 | **What does the 99.6% classifier score signify?** | The classifier scores about 99.6% on the ISOT test set. This measures how well it separates this dataset’s writing styles, not whether a real-world claim is true. That is why NewsCheck AI adds live evidence-based verification. |
+
+---
+
+## 9. Deployment (Render & Cloud Production)
+
+NewsCheck AI is fully production-configured and ready for zero-downtime deployment on **Render** (as well as Railway, Fly.io, or AWS).
+
+### Step-by-Step Render Deployment
+
+1. **Push your repository** to GitHub or GitLab.
+2. Log into the [Render Dashboard](https://dashboard.render.com/) and click **New +** $\rightarrow$ **Web Service**.
+3. Connect your repository.
+4. Fill in the following build and start configurations:
+   - **Environment**: `Python 3`
+   - **Build Command**:
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - **Start Command**:
+     ```bash
+     gunicorn app:app
+     ```
+   - **Health Check Path**: `/health` (returns HTTP `200 OK`).
+
+5. **Environment Variables**:
+   In the **Environment** settings of your Render service, configure the following:
+
+   | Variable | Description / Recommended Value | Status |
+   | :--- | :--- | :--- |
+   | `PORT` | Managed automatically by Render (defaults to `10000`). Read by `app.py`. | Automatic |
+   | `SECRET_KEY` | Generate with `python -c "import secrets; print(secrets.token_hex(32))"`. No hardcoded fallback is used. | Required for Prod |
+   | `FLASK_DEBUG` | Set to `0` to keep debug mode disabled in production. | Recommended |
+   | `DATABASE_PATH` | Path to persistent SQLite DB (e.g. `/var/data/newscheck.db` with a Persistent Disk). | Optional |
+   | `NEWS_API_KEY` | *(Optional)* API key from [NewsAPI.org](https://newsapi.org/). If unset, uses zero-key search. | Optional |
+   | `PYTHON_VERSION` | Set to `3.14.7` to match local development venv. | Optional |
+
+6. **SQLite Persistence (Render Disk)**:
+   Render containers have ephemeral disks on free-tier instances. To preserve user verification history across restarts:
+   - Add a **Disk** in the Render service settings:
+     - **Name**: `newscheck-data`
+     - **Mount Path**: `/var/data`
+     - **Size**: 1 GB
+   - Set `DATABASE_PATH=/var/data/newscheck.db`.
+
+### Local WSGI Testing (Production Simulation)
+
+You can verify the production WSGI pipeline locally before pushing to Render:
+
+#### On Windows (Waitress WSGI Runner):
+`gunicorn` is POSIX-only (`fcntl`/`fork`). On Windows, use `waitress-serve` to simulate production WSGI execution:
+```powershell
+# Run the WSGI production server locally
+waitress-serve --listen=127.0.0.1:5000 app:app
+```
+
+#### On Linux / macOS / Docker (Gunicorn WSGI Runner):
+```bash
+gunicorn app:app --bind 0.0.0.0:5000 --workers 2
+```
+
+### Health Check Monitoring
+- **Route**: `GET /health`
+- **Status Code**: `200 OK`
+- **Payload**: `OK`
+- Used by cloud load balancers and container orchestrators for zero-downtime deployment health checks.
 #   F a k e - n e w s  
  

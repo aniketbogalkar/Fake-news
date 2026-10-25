@@ -5,8 +5,12 @@ An AI-Powered Fake News Detection and Source Verification System.
 
 import os
 import json
+import secrets
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from dotenv import load_dotenv
+
+# Load environment variables early so all modules and paths see them
+load_dotenv()
 
 from database.db import (
     init_db,
@@ -18,11 +22,17 @@ from database.db import (
 )
 from services.verification import analyze_news_item, ml_engine
 
-# Load environment variables
-load_dotenv()
-
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "newscheck_secret_key_college_project_2024")
+
+# Read secret key from environment variable; generate ephemeral key if not set (no hardcoded secrets)
+app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+
+# Set debug mode based strictly on FLASK_DEBUG=1
+app.config["DEBUG"] = os.environ.get("FLASK_DEBUG", "0").strip() == "1"
+
+# Ensure ML model is loaded at import time for production WSGI servers (e.g. Gunicorn)
+if ml_engine.model is None or ml_engine.vectorizer is None:
+    ml_engine.load_model()
 
 # Initialize database schema on startup
 with app.app_context():
@@ -142,9 +152,19 @@ def api_stats():
     })
 
 
+@app.route("/health")
+def health():
+    """Health check endpoint for Render and uptime monitoring services."""
+    return "OK", 200
+
+
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "0").strip() == "1"
+    host = os.environ.get("HOST", "0.0.0.0")
     print("\n=======================================================")
     print("  NewsCheck AI — Fact Verification Platform Running")
-    print("  Open your browser at: http://127.0.0.1:5000")
+    print(f"  Listening on: http://{host}:{port}")
+    print(f"  Debug mode: {debug}")
     print("=======================================================\n")
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host=host, port=port, debug=debug)

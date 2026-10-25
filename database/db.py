@@ -3,12 +3,28 @@ import json
 import os
 from datetime import datetime
 
-DATABASE_PATH = os.environ.get("DATABASE_PATH", os.path.join(os.path.dirname(__file__), "newscheck.db"))
+def get_db_path() -> str:
+    """
+    Returns the configured SQLite database file path.
+    Reads from DATABASE_PATH or SQLITE_PATH environment variables.
+    Defaults to database/newscheck.db relative to this file's directory.
+    """
+    configured = os.environ.get("DATABASE_PATH") or os.environ.get("SQLITE_PATH")
+    if configured:
+        return os.path.abspath(configured)
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "newscheck.db"))
+
+
+# Backward-compatible reference
+DATABASE_PATH = get_db_path()
 
 
 def get_db_connection():
-    os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
-    conn = sqlite3.connect(DATABASE_PATH)
+    db_path = get_db_path()
+    db_dir = os.path.dirname(db_path)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
